@@ -1,0 +1,104 @@
+name: Build Concise E-Ihale Catalog
+
+on:
+  push:
+    branches:
+      - eihale-live-audit-20260820
+    paths:
+      - '.github/workflows/eihale-concise.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  concise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eihale-live-audit-20260820
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build concise catalog
+        run: |
+          cat > /tmp/concise.js <<'NODE'
+          const fs = require('fs');
+          const rows = JSON.parse(fs.readFileSync('live-output/actual-afternoon.json', 'utf8'));
+
+          function productLines(details) {
+            let text = String(details || '').replace(/\u00a0/g, ' ');
+            const stops = [
+              /Eşya mevcut durumu ile satışa sunulmaktadır/i,
+              /E-İhale yoluyla yapılacak/i,
+              /Satışlarımız 6502/i,
+              /İhalenin tamamlanmasını izleyen/i,
+              /İHALE GÖRSELLERİ/i,
+              /call\s*\n444/i
+            ];
+            let stopAt = text.length;
+            for (const pattern of stops) {
+              const match = text.match(pattern);
+              if (match && match.index >= 0) stopAt = Math.min(stopAt, match.index);
+            }
+            text = text.slice(0, stopAt);
+            const lines = text.split(/\n+/)
+              .map((line) => line.trim())
+              .filter(Boolean)
+              .filter((line) => !/damga vergisi tahsil edilecektir/i.test(line))
+              .filter((line) => !/^Açıklama\s*\*?$/i.test(line))
+              .filter((line) => !/^Açıklama ve Özel Şartlar$/i.test(line));
+            return lines.slice(0, 160);
+          }
+
+          const output = [];
+          output.push('# 20 Ağustos 2026 Öğleden Sonra E-İhale — Kısa Ürün Kataloğu');
+          output.push('');
+          output.push(`Doğrulanmış lot: **${rows.length}**`);
+          output.push('');
+          output.push('## Tek satırlık liste');
+          output.push('');
+          output.push('| Saat | İhale | Başlangıç | Canlı | Satışa esas | Teminat | Ek yük |');
+          output.push('|---:|---|---:|---:|---:|---:|---|');
+          for (const item of rows) {
+            const title = String(item.title || '').replace(/\|/g, '\\|');
+            const extra = String(item.extraLiability || '—').replace(/\|/g, '\\|');
+            output.push(`| ${item.time} | [${title}](${item.url}) | ${item.startingPrice || '—'} | ${item.currentPrice || '—'} | ${item.appraisal || '—'} | ${item.deposit || '—'} | ${extra} |`);
+          }
+          output.push('');
+
+          for (const item of rows) {
+            const lines = productLines(item.details);
+            output.push(`## ${item.time} — ${item.title}`);
+            output.push('');
+            output.push(`- URL: ${item.url}`);
+            output.push(`- İhale no: ${item.auctionNo || '—'}`);
+            output.push(`- Yer: ${item.location || '—'}`);
+            output.push(`- Kategori: ${item.category || '—'}`);
+            output.push(`- Başlangıç / canlı: ${item.startingPrice || '—'} / ${item.currentPrice || '—'}`);
+            output.push(`- Satışa esas / teminat: ${item.appraisal || '—'} / ${item.deposit || '—'}`);
+            output.push(`- Ek mali yük: ${item.extraLiability || '—'}`);
+            output.push(`- Tasfiye nedeni: ${item.liquidationReason || '—'}`);
+            output.push('- Ürünler ve ayırt edici şartlar:');
+            if (lines.length) {
+              for (const line of lines) output.push(`  - ${line}`);
+            } else {
+              output.push('  - Portal metninde kısa ürün satırı ayrıştırılamadı.');
+            }
+            output.push('');
+          }
+
+          fs.writeFileSync('live-output/concise-afternoon.md', output.join('\n'));
+          console.log(`Concise catalog rows: ${rows.length}`);
+          NODE
+          node /tmp/concise.js
+      - name: Commit concise catalog
+        run: |
+          git config user.name "eihale-live-probe"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-output/concise-afternoon.md
+          git commit -m "Build concise afternoon auction catalog [skip ci]"
+          git push origin HEAD:eihale-live-audit-20260820
