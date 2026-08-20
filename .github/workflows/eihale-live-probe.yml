@@ -1,0 +1,112 @@
+name: E-Ihale Live Probe
+
+on:
+  push:
+    branches:
+      - eihale-live-audit-20260820
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chromium
+
+      - name: Capture live auction pages
+        run: |
+          mkdir -p output
+          cat > probe.js <<'NODE'
+          const fs = require('fs');
+          const { chromium } = require('playwright');
+
+          const base = 'https://eihale.gov.tr/ihaleler';
+          const output = { generatedAt: new Date().toISOString(), pages: [], responses: [] };
+          const bodyLimit = 3_000_000;
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({
+              locale: 'tr-TR',
+              timezoneId: 'Europe/Istanbul',
+              viewport: { width: 1440, height: 1200 },
+              userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/139 Safari/537.36'
+            });
+            const page = await context.newPage();
+
+            page.on('response', async (res) => {
+              const url = res.url();
+              const headers = res.headers();
+              const contentType = headers['content-type'] || '';
+              if (!url.includes('eihale.gov.tr')) return;
+              const row = { url, status: res.status(), contentType };
+              if (contentType.includes('json') || contentType.includes('text')) {
+                try {
+                  const text = await res.text();
+                  row.body = text.length > bodyLimit ? text.slice(0, bodyLimit) : text;
+                } catch (error) {
+                  row.bodyError = String(error);
+                }
+              }
+              output.responses.push(row);
+            });
+
+            for (const skipCount of [0, 48, 96, 144, 192]) {
+              const url = `${base}?skipCount=${skipCount}&maxResultCount=48`;
+              try {
+                await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 120000 });
+                await page.waitForTimeout(8000);
+                const bodyText = await page.locator('body').innerText().catch(() => '');
+                const links = await page.locator('a[href*="/ihaleler/detay/"]').evaluateAll((anchors) => anchors.map((a) => {
+                  const parentTexts = [];
+                  let node = a;
+                  for (let i = 0; i < 7 && node; i += 1, node = node.parentElement) {
+                    const text = (node.innerText || '').replace(/\s+/g, ' ').trim();
+                    if (text && !parentTexts.includes(text)) parentTexts.push(text.slice(0, 3000));
+                  }
+                  return {
+                    href: a.href,
+                    text: (a.innerText || '').replace(/\s+/g, ' ').trim(),
+                    parentTexts
+                  };
+                }));
+                output.pages.push({ skipCount, url: page.url(), title: await page.title(), bodyText, links });
+                if (skipCount === 48) {
+                  await page.screenshot({ path: 'output/page-2.png', fullPage: true });
+                  fs.writeFileSync('output/page-2.html', await page.content());
+                }
+              } catch (error) {
+                output.pages.push({ skipCount, url, error: String(error) });
+              }
+            }
+
+            fs.writeFileSync('output/list-probe.json', JSON.stringify(output, null, 2));
+            await browser.close();
+          })().catch((error) => {
+            fs.writeFileSync('output/fatal.txt', String(error && error.stack || error));
+            process.exitCode = 1;
+          });
+          NODE
+          node probe.js
+
+      - name: Upload probe output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eihale-live-probe
+          path: output/
+          if-no-files-found: warn
+          retention-days: 1
