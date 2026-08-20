@@ -1,4 +1,4 @@
-name: Summarize Precious Metal Lot
+name: Summarize Precious Metal Lot From Raw Detail
 
 on:
   push:
@@ -23,42 +23,48 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Parse metal weights
+      - name: Parse metal weights from uncropped detail body
         run: |
           cat > /tmp/metals.js <<'NODE'
           const fs = require('fs');
-          const rows = JSON.parse(fs.readFileSync('live-output/actual-afternoon.json', 'utf8'));
-          const lot = rows.find((row) => row.time === '14:40');
-          if (!lot) throw new Error('14:40 lot not found');
-          const text = lot.details || '';
-          const totals = { gold: {}, silver925GrossGrams: 0, quarterGoldCount: 0, diamondCarat: 0, matchedLines: [] };
+          const detailFiles = fs.readdirSync('live-output').filter((name) => /^details-\d+\.json$/.test(name));
+          const rows = detailFiles.flatMap((name) => JSON.parse(fs.readFileSync(`live-output/${name}`, 'utf8')));
+          const lot = rows.find((row) => /ALTIN-GÜMÜŞ TAKI/i.test(row.title || ''));
+          if (!lot) throw new Error('Precious-metal lot not found');
+          const body = lot.bodyText || '';
+          const start = body.indexOf('İHALE DETAYLARI');
+          const text = start >= 0 ? body.slice(start) : body;
+          const totals = { gold: {}, silver925GrossGrams: 0, quarterGoldCount: 0, diamondCarat: 0, matchedLines: [], rawLength: text.length };
+          const normalizeNumber = (value) => Number(String(value).replace(/\./g, '').replace(',', '.'));
           for (const raw of text.split(/\n+/)) {
-            const line = raw.trim();
+            const line = raw.replace(/\u00a0/g, ' ').trim();
             if (!line) continue;
-            const countMatch = line.match(/\/\/\s*(\d+)\s*ADET/i);
+            const countMatch = line.match(/\/\/?\s*(\d+)\s*ADET/i);
             const count = countMatch ? Number(countMatch[1]) : 1;
             const goldMatch = line.match(/ALTIN[^\n]*?\((8|14|18|21|22)\s*AYAR\s*[-–]?\s*([\d.,]+)\s*GRAM\)/i);
             if (goldMatch) {
               const karat = Number(goldMatch[1]);
-              const grams = Number(goldMatch[2].replace('.', '').replace(',', '.'));
+              const grams = normalizeNumber(goldMatch[2]);
               totals.gold[karat] = (totals.gold[karat] || 0) + grams;
               totals.matchedLines.push({ type: 'gold', karat, grams, listedCount: count, line });
             }
             const silverMatch = line.match(/GÜMÜŞ[^\n]*?\(925\s*AYAR\s*[-–]?\s*([\d.,]+)\s*GRAM\)/i);
             if (silverMatch) {
-              const grams = Number(silverMatch[1].replace('.', '').replace(',', '.'));
+              const grams = normalizeNumber(silverMatch[1]);
               totals.silver925GrossGrams += grams;
               totals.matchedLines.push({ type: 'silver925', grams, listedCount: count, line });
             }
             if (/ÇEYREK ALTIN/i.test(line)) totals.quarterGoldCount += count;
             const diamond = line.match(/PIRLANTALI[-–]?\s*([\d.,]+)\s*CT/i);
-            if (diamond) totals.diamondCarat += Number(diamond[1].replace(',', '.'));
+            if (diamond) totals.diamondCarat += normalizeNumber(diamond[1]);
           }
           totals.goldGrossGrams = Object.values(totals.gold).reduce((a, b) => a + b, 0);
           totals.goldPureEquivalentGrams = Object.entries(totals.gold).reduce((sum, [karat, grams]) => sum + grams * Number(karat) / 24, 0);
           totals.silverPureEquivalentGrams = totals.silver925GrossGrams * 0.925;
           fs.writeFileSync('live-output/metal-summary.json', JSON.stringify({ auction: {
-            title: lot.title, url: lot.url, currentPrice: lot.currentPrice, appraisal: lot.appraisal, deposit: lot.deposit
+            title: String(lot.title || '').replace(/^E-İhale\s*\|\s*/i, ''),
+            url: lot.href,
+            bodyLength: body.length
           }, totals }, null, 2));
           console.log(JSON.stringify(totals, null, 2));
           NODE
@@ -68,5 +74,5 @@ jobs:
           git config user.name "eihale-live-probe"
           git config user.email "actions@users.noreply.github.com"
           git add live-output/metal-summary.json
-          git commit -m "Summarize precious-metal auction weights [skip ci]"
+          git commit -m "Recalculate precious-metal weights from raw detail [skip ci]"
           git push origin HEAD:eihale-live-audit-20260820
