@@ -1,0 +1,72 @@
+name: Summarize Precious Metal Lot
+
+on:
+  push:
+    branches:
+      - eihale-live-audit-20260820
+    paths:
+      - '.github/workflows/eihale-metal-summary.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eihale-live-audit-20260820
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Parse metal weights
+        run: |
+          cat > /tmp/metals.js <<'NODE'
+          const fs = require('fs');
+          const rows = JSON.parse(fs.readFileSync('live-output/actual-afternoon.json', 'utf8'));
+          const lot = rows.find((row) => row.time === '14:40');
+          if (!lot) throw new Error('14:40 lot not found');
+          const text = lot.details || '';
+          const totals = { gold: {}, silver925GrossGrams: 0, quarterGoldCount: 0, diamondCarat: 0, matchedLines: [] };
+          for (const raw of text.split(/\n+/)) {
+            const line = raw.trim();
+            if (!line) continue;
+            const countMatch = line.match(/\/\/\s*(\d+)\s*ADET/i);
+            const count = countMatch ? Number(countMatch[1]) : 1;
+            const goldMatch = line.match(/ALTIN[^\n]*?\((8|14|18|21|22)\s*AYAR\s*[-–]?\s*([\d.,]+)\s*GRAM\)/i);
+            if (goldMatch) {
+              const karat = Number(goldMatch[1]);
+              const grams = Number(goldMatch[2].replace('.', '').replace(',', '.'));
+              totals.gold[karat] = (totals.gold[karat] || 0) + grams;
+              totals.matchedLines.push({ type: 'gold', karat, grams, listedCount: count, line });
+            }
+            const silverMatch = line.match(/GÜMÜŞ[^\n]*?\(925\s*AYAR\s*[-–]?\s*([\d.,]+)\s*GRAM\)/i);
+            if (silverMatch) {
+              const grams = Number(silverMatch[1].replace('.', '').replace(',', '.'));
+              totals.silver925GrossGrams += grams;
+              totals.matchedLines.push({ type: 'silver925', grams, listedCount: count, line });
+            }
+            if (/ÇEYREK ALTIN/i.test(line)) totals.quarterGoldCount += count;
+            const diamond = line.match(/PIRLANTALI[-–]?\s*([\d.,]+)\s*CT/i);
+            if (diamond) totals.diamondCarat += Number(diamond[1].replace(',', '.'));
+          }
+          totals.goldGrossGrams = Object.values(totals.gold).reduce((a, b) => a + b, 0);
+          totals.goldPureEquivalentGrams = Object.entries(totals.gold).reduce((sum, [karat, grams]) => sum + grams * Number(karat) / 24, 0);
+          totals.silverPureEquivalentGrams = totals.silver925GrossGrams * 0.925;
+          fs.writeFileSync('live-output/metal-summary.json', JSON.stringify({ auction: {
+            title: lot.title, url: lot.url, currentPrice: lot.currentPrice, appraisal: lot.appraisal, deposit: lot.deposit
+          }, totals }, null, 2));
+          console.log(JSON.stringify(totals, null, 2));
+          NODE
+          node /tmp/metals.js
+      - name: Commit summary
+        run: |
+          git config user.name "eihale-live-probe"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-output/metal-summary.json
+          git commit -m "Summarize precious-metal auction weights [skip ci]"
+          git push origin HEAD:eihale-live-audit-20260820
