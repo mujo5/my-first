@@ -1,0 +1,87 @@
+name: Filter Actual 20 August Auctions
+
+on:
+  push:
+    branches:
+      - eihale-live-audit-20260820
+    paths:
+      - '.github/workflows/eihale-filter.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eihale-live-audit-20260820
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Filter and format actual date
+        run: |
+          cat > /tmp/filter.js <<'NODE'
+          const fs = require('fs');
+          const source = JSON.parse(fs.readFileSync('live-output/afternoon-compact.json', 'utf8'));
+          const rows = source
+            .filter((item) => /^20 Ağustos 2026\b/i.test(item.endText || ''))
+            .sort((a, b) => (a.time || '').localeCompare(b.time || '') || a.index - b.index);
+
+          const lines = [];
+          lines.push('# 20 Ağustos 2026 Öğleden Sonra E-İhale — Doğrulanmış Lotlar');
+          lines.push('');
+          lines.push(`Detay sayfasındaki bitiş tarihine göre doğrulanmış lot sayısı: **${rows.length}**`);
+          lines.push('');
+          lines.push('> Tutarlar 20 Ağustos 2026 sabahındaki canlı tarama anına aittir ve kapanışa kadar değişebilir.');
+          lines.push('');
+          lines.push('## Hızlı katalog');
+          lines.push('');
+          lines.push('| Saat | İhale | Başlangıç | Canlı fiyat | Teminat | Ek mali yük | Detay |');
+          lines.push('|---:|---|---:|---:|---:|---|---|');
+          for (const item of rows) {
+            const safeTitle = String(item.title || '').replace(/\|/g, '\\|');
+            const extra = String(item.extraLiability || '—').replace(/\|/g, '\\|');
+            lines.push(`| ${item.time || '—'} | ${safeTitle} | ${item.startingPrice || '—'} | ${item.currentPrice || '—'} | ${item.deposit || '—'} | ${extra} | [Aç](${item.url}) |`);
+          }
+          lines.push('');
+
+          for (const item of rows) {
+            lines.push(`## ${item.time || '—'} — ${item.title}`);
+            lines.push('');
+            lines.push(`- **Detay:** ${item.url}`);
+            lines.push(`- **İhale no:** ${item.auctionNo || '—'}`);
+            lines.push(`- **İşletme:** ${item.operator || '—'}`);
+            lines.push(`- **Kategori:** ${item.category || '—'}`);
+            lines.push(`- **Yer:** ${item.location || '—'}`);
+            lines.push(`- **Satışa esas bedel:** ${item.appraisal || '—'}`);
+            lines.push(`- **Başlangıç bedeli:** ${item.startingPrice || '—'}`);
+            lines.push(`- **Canlı fiyat:** ${item.currentPrice || 'Teklif yok / başlangıç bedeli geçerli'}`);
+            lines.push(`- **Teminat:** ${item.deposit || '—'}`);
+            lines.push(`- **Ek mali yük:** ${item.extraLiability || '—'}`);
+            lines.push(`- **Tasfiye nedeni:** ${item.liquidationReason || '—'}`);
+            lines.push(`- **Bitiş:** ${item.endText || '—'}`);
+            lines.push('');
+            lines.push('### Portalda görünen eşya ve özel şartlar');
+            lines.push('');
+            lines.push('```text');
+            lines.push(item.details || 'Detay metni bulunamadı.');
+            lines.push('```');
+            lines.push('');
+          }
+          fs.writeFileSync('live-output/actual-afternoon-report.md', lines.join('\n'));
+          fs.writeFileSync('live-output/actual-afternoon.json', JSON.stringify(rows, null, 2));
+          console.log(`Actual target-date auctions: ${rows.length}`);
+          NODE
+          node /tmp/filter.js
+      - name: Commit filtered report
+        run: |
+          git config user.name "eihale-live-probe"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-output/actual-afternoon-report.md live-output/actual-afternoon.json
+          git commit -m "Filter actual 20 August afternoon auctions [skip ci]"
+          git push origin HEAD:eihale-live-audit-20260820
