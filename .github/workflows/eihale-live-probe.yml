@@ -4,17 +4,22 @@ on:
   push:
     branches:
       - eihale-live-audit-20260820
+    paths-ignore:
+      - 'live-output/**'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: eihale-live-audit-20260820
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -24,18 +29,95 @@ jobs:
         run: |
           npm init -y
           npm install playwright@1.55.0
-          npx playwright install chromium
+          npx playwright install --with-deps chromium
 
-      - name: Capture live auction pages
+      - name: Capture list and auction detail pages
         run: |
-          mkdir -p output
+          rm -rf live-output
+          mkdir -p live-output
           cat > probe.js <<'NODE'
           const fs = require('fs');
           const { chromium } = require('playwright');
 
           const base = 'https://eihale.gov.tr/ihaleler';
-          const output = { generatedAt: new Date().toISOString(), pages: [], responses: [] };
-          const bodyLimit = 3_000_000;
+          const targetDatePatterns = [/20[.\/]08[.\/]2026/i, /20\s*Ağustos\s*2026/i];
+          const pagesOut = [];
+          const networkOut = [];
+          const allLinks = new Map();
+          const seenNetwork = new Set();
+
+          const clean = (value, limit = 12000) => String(value || '').replace(/\u0000/g, '').trim().slice(0, limit);
+
+          function likelyToday(text) {
+            return targetDatePatterns.some((pattern) => pattern.test(text || ''));
+          }
+
+          async function scrapeListPage(page, skipCount) {
+            const url = `${base}?skipCount=${skipCount}&maxResultCount=48`;
+            try {
+              await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 120000 });
+              await page.waitForTimeout(7500);
+              const bodyText = clean(await page.locator('body').innerText().catch(() => ''), 100000);
+              const links = await page.locator('a[href*="/ihaleler/detay/"]').evaluateAll((anchors) => anchors.map((a) => {
+                const parentTexts = [];
+                let node = a;
+                for (let i = 0; i < 9 && node; i += 1, node = node.parentElement) {
+                  const text = (node.innerText || '').replace(/\s+/g, ' ').trim();
+                  if (text && !parentTexts.includes(text)) parentTexts.push(text.slice(0, 7000));
+                }
+                return {
+                  href: a.href,
+                  text: (a.innerText || '').replace(/\s+/g, ' ').trim(),
+                  parentTexts
+                };
+              }));
+              for (const link of links) {
+                const contextText = link.parentTexts.join(' | ');
+                const existing = allLinks.get(link.href);
+                if (!existing || contextText.length < existing.contextText.length) {
+                  allLinks.set(link.href, {
+                    href: link.href,
+                    anchorText: link.text,
+                    contextText: clean(contextText, 14000),
+                    skipCount,
+                    listMentionsTargetDate: likelyToday(contextText)
+                  });
+                }
+              }
+              pagesOut.push({ skipCount, requestedUrl: url, finalUrl: page.url(), title: await page.title(), bodyText, links });
+            } catch (error) {
+              pagesOut.push({ skipCount, requestedUrl: url, error: String(error && error.stack || error) });
+            }
+          }
+
+          async function scrapeDetail(context, link, index) {
+            const page = await context.newPage();
+            const result = { index, ...link };
+            try {
+              await page.goto(link.href, { waitUntil: 'domcontentloaded', timeout: 120000 });
+              await page.waitForTimeout(4500);
+              result.finalUrl = page.url();
+              result.title = await page.title();
+              result.bodyText = clean(await page.locator('body').innerText().catch(() => ''), 30000);
+              result.mentionsTargetDate = likelyToday(`${link.contextText}\n${result.bodyText}`);
+              result.images = (await page.locator('img').evaluateAll((imgs) => imgs.map((img) => ({
+                src: img.currentSrc || img.src || '',
+                alt: img.alt || '',
+                width: img.naturalWidth || 0,
+                height: img.naturalHeight || 0
+              })).filter((img) => img.src))).slice(0, 80);
+              result.links = (await page.locator('a').evaluateAll((anchors) => anchors.map((a) => ({
+                href: a.href || '',
+                text: (a.innerText || '').replace(/\s+/g, ' ').trim()
+              })).filter((a) => a.href))).slice(0, 100);
+              result.buttons = (await page.locator('button, [role="button"]').evaluateAll((nodes) => nodes.map((node) => (node.innerText || node.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim()).filter(Boolean))).slice(0, 80);
+            } catch (error) {
+              result.error = String(error && error.stack || error);
+            } finally {
+              await page.close();
+            }
+            return result;
+          }
 
           (async () => {
             const browser = await chromium.launch({ headless: true });
@@ -45,68 +127,94 @@ jobs:
               viewport: { width: 1440, height: 1200 },
               userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/139 Safari/537.36'
             });
-            const page = await context.newPage();
+            const listPage = await context.newPage();
 
-            page.on('response', async (res) => {
+            listPage.on('response', async (res) => {
               const url = res.url();
-              const headers = res.headers();
-              const contentType = headers['content-type'] || '';
-              if (!url.includes('eihale.gov.tr')) return;
+              const contentType = res.headers()['content-type'] || '';
+              if (!url.includes('eihale.gov.tr') || !(contentType.includes('json') || contentType.includes('text'))) return;
+              const key = `${res.status()} ${url}`;
+              if (seenNetwork.has(key) || networkOut.length >= 40) return;
+              seenNetwork.add(key);
               const row = { url, status: res.status(), contentType };
-              if (contentType.includes('json') || contentType.includes('text')) {
-                try {
-                  const text = await res.text();
-                  row.body = text.length > bodyLimit ? text.slice(0, bodyLimit) : text;
-                } catch (error) {
-                  row.bodyError = String(error);
-                }
+              try {
+                row.body = clean(await res.text(), 250000);
+              } catch (error) {
+                row.bodyError = String(error);
               }
-              output.responses.push(row);
+              networkOut.push(row);
             });
 
-            for (const skipCount of [0, 48, 96, 144, 192]) {
-              const url = `${base}?skipCount=${skipCount}&maxResultCount=48`;
-              try {
-                await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 120000 });
-                await page.waitForTimeout(8000);
-                const bodyText = await page.locator('body').innerText().catch(() => '');
-                const links = await page.locator('a[href*="/ihaleler/detay/"]').evaluateAll((anchors) => anchors.map((a) => {
-                  const parentTexts = [];
-                  let node = a;
-                  for (let i = 0; i < 7 && node; i += 1, node = node.parentElement) {
-                    const text = (node.innerText || '').replace(/\s+/g, ' ').trim();
-                    if (text && !parentTexts.includes(text)) parentTexts.push(text.slice(0, 3000));
-                  }
-                  return {
-                    href: a.href,
-                    text: (a.innerText || '').replace(/\s+/g, ' ').trim(),
-                    parentTexts
-                  };
-                }));
-                output.pages.push({ skipCount, url: page.url(), title: await page.title(), bodyText, links });
-                if (skipCount === 48) {
-                  await page.screenshot({ path: 'output/page-2.png', fullPage: true });
-                  fs.writeFileSync('output/page-2.html', await page.content());
-                }
-              } catch (error) {
-                output.pages.push({ skipCount, url, error: String(error) });
+            for (const skipCount of [0, 48, 96, 144, 192, 240]) {
+              await scrapeListPage(listPage, skipCount);
+            }
+            await listPage.close();
+
+            const uniqueLinks = [...allLinks.values()];
+            fs.writeFileSync('live-output/list-pages.json', JSON.stringify({
+              generatedAt: new Date().toISOString(),
+              pageCount: pagesOut.length,
+              uniqueLinkCount: uniqueLinks.length,
+              pages: pagesOut,
+              links: uniqueLinks
+            }, null, 2));
+            fs.writeFileSync('live-output/network.json', JSON.stringify(networkOut, null, 2));
+
+            const detailLinks = uniqueLinks.slice(0, 288);
+            const results = new Array(detailLinks.length);
+            let cursor = 0;
+            async function worker(workerId) {
+              while (true) {
+                const index = cursor++;
+                if (index >= detailLinks.length) break;
+                results[index] = await scrapeDetail(context, detailLinks[index], index);
               }
             }
+            await Promise.all(Array.from({ length: 7 }, (_, index) => worker(index)));
 
-            fs.writeFileSync('output/list-probe.json', JSON.stringify(output, null, 2));
+            const targetDetails = results.filter((row) => row && row.mentionsTargetDate);
+            const chunks = [];
+            for (let i = 0; i < targetDetails.length; i += 20) {
+              const chunk = targetDetails.slice(i, i + 20);
+              const filename = `live-output/details-${String(chunks.length + 1).padStart(2, '0')}.json`;
+              fs.writeFileSync(filename, JSON.stringify(chunk, null, 2));
+              chunks.push({ filename, count: chunk.length });
+            }
+            fs.writeFileSync('live-output/index.json', JSON.stringify({
+              generatedAt: new Date().toISOString(),
+              totalUniqueLinks: uniqueLinks.length,
+              totalDetailsScraped: results.filter(Boolean).length,
+              targetDateDetails: targetDetails.length,
+              chunks,
+              errors: results.filter((row) => row && row.error).map((row) => ({ href: row.href, error: row.error }))
+            }, null, 2));
+
             await browser.close();
           })().catch((error) => {
-            fs.writeFileSync('output/fatal.txt', String(error && error.stack || error));
+            fs.writeFileSync('live-output/fatal.txt', String(error && error.stack || error));
             process.exitCode = 1;
           });
           NODE
           node probe.js
 
-      - name: Upload probe output
+      - name: Commit compact live output
+        if: always()
+        run: |
+          git config user.name "eihale-live-probe"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-output
+          if git diff --cached --quiet; then
+            echo "No probe output to commit"
+          else
+            git commit -m "Store live e-ihale probe output [skip ci]"
+            git push origin HEAD:eihale-live-audit-20260820
+          fi
+
+      - name: Upload full probe output
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: eihale-live-probe
-          path: output/
+          path: live-output/
           if-no-files-found: warn
           retention-days: 1
