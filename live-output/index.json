@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-08-20T06:54:15.939Z",
+  "totalUniqueLinks": 240,
+  "totalDetailsScraped": 240,
+  "targetDateDetails": 49,
+  "chunks": [
+    {
+      "filename": "live-output/details-01.json",
+      "count": 20
+    },
+    {
+      "filename": "live-output/details-02.json",
+      "count": 20
+    },
+    {
+      "filename": "live-output/details-03.json",
+      "count": 9
+    }
+  ],
+  "errors": []
+}
