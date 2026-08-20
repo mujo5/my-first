@@ -2,9 +2,7 @@
   "auction": {
     "title": "ALTIN-GÜMÜŞ TAKI VE PANDORA YÜZÜK (2026-140,262,294)(5 ADET TTB)",
     "url": "https://eihale.gov.tr/ihaleler/detay/8KsLSEh2Un6XSRypWfAqKq",
-    "currentPrice": "1.708.663 ₺",
-    "appraisal": "3.367.325 ₺",
-    "deposit": "100.000 ₺"
+    "bodyLength": 15196
   },
   "totals": {
     "gold": {
@@ -14,9 +12,9 @@
       "21": 14.989999999999998,
       "22": 36.25
     },
-    "silver925GrossGrams": 2128.76,
+    "silver925GrossGrams": 2262.34,
     "quarterGoldCount": 1,
-    "diamondCarat": 2.1,
+    "diamondCarat": 210,
     "matchedLines": [
       {
         "type": "gold",
@@ -933,7 +931,7 @@
       {
         "type": "silver925",
         "grams": 20,
-        "listedCount": 1,
+        "listedCount": 3,
         "line": "GÜMÜŞ YÜZÜK (925 AYAR - 20 GRAM) MUHTELİF/MARKASIZ / 3 ADET"
       },
       {
@@ -1037,10 +1035,53 @@
         "grams": 19.45,
         "listedCount": 4,
         "line": "GÜMÜŞ YÜZÜK (925 AYAR - 19,45 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 9.7,
+        "listedCount": 2,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 9,7 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 1.83,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KOLYE UCU (925 AYAR - 1,83 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 73.75,
+        "listedCount": 2,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 73,75 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 12.05,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 12,05 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 12.6,
+        "listedCount": 2,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 12,60 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 13.65,
+        "listedCount": 3,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 13,65 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 10 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
       }
     ],
+    "rawLength": 14182,
     "goldGrossGrams": 381.24,
     "goldPureEquivalentGrams": 234.86625000000004,
-    "silverPureEquivalentGrams": 1969.1030000000003
+    "silverPureEquivalentGrams": 2092.6645000000003
   }
 }
