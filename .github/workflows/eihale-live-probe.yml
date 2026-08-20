@@ -1,20 +1,20 @@
-name: E-Ihale Live Probe
+name: Format E-Ihale Afternoon Data
 
 on:
   push:
     branches:
       - eihale-live-audit-20260820
-    paths-ignore:
-      - 'live-output/**'
+    paths:
+      - '.github/workflows/eihale-live-probe.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  probe:
+  format:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,196 +25,118 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Playwright
+      - name: Build readable afternoon report
         run: |
-          npm init -y
-          npm install playwright@1.55.0
-          npx playwright install --with-deps chromium
-
-      - name: Capture list and auction detail pages
-        run: |
-          rm -rf live-output
-          mkdir -p live-output
-          cat > probe.js <<'NODE'
+          cat > /tmp/format.js <<'NODE'
           const fs = require('fs');
-          const { chromium } = require('playwright');
+          const path = require('path');
 
-          const base = 'https://eihale.gov.tr/ihaleler';
-          const targetDatePatterns = [/20[.\/]08[.\/]2026/i, /20\s*Ağustos\s*2026/i];
-          const pagesOut = [];
-          const networkOut = [];
-          const allLinks = new Map();
-          const seenNetwork = new Set();
+          const dir = 'live-output';
+          const files = fs.readdirSync(dir)
+            .filter((name) => /^details-\d+\.json$/.test(name))
+            .sort();
+          const rows = files.flatMap((name) => JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')));
 
-          const clean = (value, limit = 12000) => String(value || '').replace(/\u0000/g, '').trim().slice(0, limit);
-
-          function likelyToday(text) {
-            return targetDatePatterns.some((pattern) => pattern.test(text || ''));
+          function findValue(text, label) {
+            const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const match = String(text || '').match(new RegExp(`${escaped}:\\s*([^\\n]+)`, 'i'));
+            return match ? match[1].trim() : '';
           }
 
-          async function scrapeListPage(page, skipCount) {
-            const url = `${base}?skipCount=${skipCount}&maxResultCount=48`;
-            try {
-              await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 120000 });
-              await page.waitForTimeout(7500);
-              const bodyText = clean(await page.locator('body').innerText().catch(() => ''), 100000);
-              const links = await page.locator('a[href*="/ihaleler/detay/"]').evaluateAll((anchors) => anchors.map((a) => {
-                const parentTexts = [];
-                let node = a;
-                for (let i = 0; i < 9 && node; i += 1, node = node.parentElement) {
-                  const text = (node.innerText || '').replace(/\s+/g, ' ').trim();
-                  if (text && !parentTexts.includes(text)) parentTexts.push(text.slice(0, 7000));
-                }
-                return {
-                  href: a.href,
-                  text: (a.innerText || '').replace(/\s+/g, ' ').trim(),
-                  parentTexts
-                };
-              }));
-              for (const link of links) {
-                const contextText = link.parentTexts.join(' | ');
-                const existing = allLinks.get(link.href);
-                if (!existing || contextText.length < existing.contextText.length) {
-                  allLinks.set(link.href, {
-                    href: link.href,
-                    anchorText: link.text,
-                    contextText: clean(contextText, 14000),
-                    skipCount,
-                    listMentionsTargetDate: likelyToday(contextText)
-                  });
-                }
-              }
-              pagesOut.push({ skipCount, requestedUrl: url, finalUrl: page.url(), title: await page.title(), bodyText, links });
-            } catch (error) {
-              pagesOut.push({ skipCount, requestedUrl: url, error: String(error && error.stack || error) });
-            }
+          function firstMatch(text, regex) {
+            const match = String(text || '').match(regex);
+            return match ? match[1].trim() : '';
           }
 
-          async function scrapeDetail(context, link, index) {
-            const page = await context.newPage();
-            const result = { index, ...link };
-            try {
-              await page.goto(link.href, { waitUntil: 'domcontentloaded', timeout: 120000 });
-              await page.waitForTimeout(4500);
-              result.finalUrl = page.url();
-              result.title = await page.title();
-              result.bodyText = clean(await page.locator('body').innerText().catch(() => ''), 30000);
-              result.mentionsTargetDate = likelyToday(`${link.contextText}\n${result.bodyText}`);
-              result.images = (await page.locator('img').evaluateAll((imgs) => imgs.map((img) => ({
-                src: img.currentSrc || img.src || '',
-                alt: img.alt || '',
-                width: img.naturalWidth || 0,
-                height: img.naturalHeight || 0
-              })).filter((img) => img.src))).slice(0, 80);
-              result.links = (await page.locator('a').evaluateAll((anchors) => anchors.map((a) => ({
-                href: a.href || '',
-                text: (a.innerText || '').replace(/\s+/g, ' ').trim()
-              })).filter((a) => a.href))).slice(0, 100);
-              result.buttons = (await page.locator('button, [role="button"]').evaluateAll((nodes) => nodes.map((node) => (node.innerText || node.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim()).filter(Boolean))).slice(0, 80);
-            } catch (error) {
-              result.error = String(error && error.stack || error);
-            } finally {
-              await page.close();
+          function cleanDetails(body) {
+            let value = String(body || '');
+            const marker = value.indexOf('İHALE DETAYLARI');
+            if (marker >= 0) value = value.slice(marker + 'İHALE DETAYLARI'.length);
+            const stopMarkers = ['İHALE GÖRSELLERİ', 'İHALE FOTOĞRAFLARI', '© 2026', 'T.C. TİCARET BAKANLIĞI'];
+            for (const stop of stopMarkers) {
+              const index = value.indexOf(stop);
+              if (index > 0) value = value.slice(0, index);
             }
-            return result;
+            return value
+              .replace(/\u00a0/g, ' ')
+              .replace(/Açıklama ve Özel Şartlar/gi, '')
+              .replace(/^\s*Açıklama \*\s*/i, '')
+              .replace(/\n{3,}/g, '\n\n')
+              .trim()
+              .slice(0, 10000);
           }
 
-          (async () => {
-            const browser = await chromium.launch({ headless: true });
-            const context = await browser.newContext({
-              locale: 'tr-TR',
-              timezoneId: 'Europe/Istanbul',
-              viewport: { width: 1440, height: 1200 },
-              userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/139 Safari/537.36'
-            });
-            const listPage = await context.newPage();
+          const parsed = rows.map((row) => {
+            const body = row.bodyText || '';
+            const endText = findValue(body, 'İhale Bitiş Tarihi');
+            const time = firstMatch(endText, /(\d{2}:\d{2})/) || firstMatch(row.contextText, /20\/08\/2026\s+(\d{2}:\d{2})/);
+            const title = String(row.title || '').replace(/^E-İhale\s*\|\s*/i, '').trim();
+            return {
+              index: row.index,
+              time,
+              title,
+              url: row.href,
+              auctionNo: findValue(body, 'İhale Numarası') || firstMatch(body, /İhale No:\s*([^\n]+)/i),
+              operator: findValue(body, 'İşletme Müdürlüğü'),
+              category: findValue(body, 'Eşya Kategori'),
+              extraLiability: findValue(body, 'Ek Mali Yükümlülük'),
+              liquidationReason: findValue(body, 'Tasfiye Nedeni'),
+              location: findValue(body, 'Bulunduğu Yer'),
+              appraisal: findValue(body, 'Satışa Esas Bedel'),
+              deposit: findValue(body, 'Teminat Bedeli'),
+              startingPrice: findValue(body, 'Başlangıç Bedeli'),
+              currentPrice: firstMatch(body, /Güncel Fiyat:\s*([\d.]+\s*₺)/i),
+              endText,
+              details: cleanDetails(body)
+            };
+          }).sort((a, b) => a.time.localeCompare(b.time) || a.index - b.index);
 
-            listPage.on('response', async (res) => {
-              const url = res.url();
-              const contentType = res.headers()['content-type'] || '';
-              if (!url.includes('eihale.gov.tr') || !(contentType.includes('json') || contentType.includes('text'))) return;
-              const key = `${res.status()} ${url}`;
-              if (seenNetwork.has(key) || networkOut.length >= 40) return;
-              seenNetwork.add(key);
-              const row = { url, status: res.status(), contentType };
-              try {
-                row.body = clean(await res.text(), 250000);
-              } catch (error) {
-                row.bodyError = String(error);
-              }
-              networkOut.push(row);
-            });
+          const lines = [];
+          lines.push('# 20 Ağustos 2026 Öğleden Sonra E-İhale Canlı Detay Dökümü');
+          lines.push('');
+          lines.push(`Toplam doğrulanmış lot: **${parsed.length}**`);
+          lines.push('');
+          lines.push('> Bu dosya, 20 Ağustos 2026 sabahında eihale.gov.tr üzerindeki canlı liste ve her lotun detay sayfası taranarak oluşturulmuştur. Fiyatlar tarama anındaki değerlerdir; kapanışa kadar değişebilir.');
+          lines.push('');
 
-            for (const skipCount of [0, 48, 96, 144, 192, 240]) {
-              await scrapeListPage(listPage, skipCount);
-            }
-            await listPage.close();
+          for (const item of parsed) {
+            lines.push(`## ${item.time || 'Saat bulunamadı'} — ${item.title}`);
+            lines.push('');
+            lines.push(`- **Detay:** ${item.url}`);
+            lines.push(`- **İhale no:** ${item.auctionNo || '—'}`);
+            lines.push(`- **İşletme:** ${item.operator || '—'}`);
+            lines.push(`- **Kategori:** ${item.category || '—'}`);
+            lines.push(`- **Yer:** ${item.location || '—'}`);
+            lines.push(`- **Satışa esas bedel:** ${item.appraisal || '—'}`);
+            lines.push(`- **Başlangıç bedeli:** ${item.startingPrice || '—'}`);
+            lines.push(`- **Canlı fiyat:** ${item.currentPrice || 'Teklif yok / başlangıç bedeli geçerli'}`);
+            lines.push(`- **Teminat:** ${item.deposit || '—'}`);
+            lines.push(`- **Ek mali yük:** ${item.extraLiability || '—'}`);
+            lines.push(`- **Tasfiye nedeni:** ${item.liquidationReason || '—'}`);
+            lines.push(`- **Bitiş:** ${item.endText || '—'}`);
+            lines.push('');
+            lines.push('### Portalda görünen eşya ve özel şartlar');
+            lines.push('');
+            lines.push('```text');
+            lines.push(item.details || 'Detay metni bulunamadı.');
+            lines.push('```');
+            lines.push('');
+          }
 
-            const uniqueLinks = [...allLinks.values()];
-            fs.writeFileSync('live-output/list-pages.json', JSON.stringify({
-              generatedAt: new Date().toISOString(),
-              pageCount: pagesOut.length,
-              uniqueLinkCount: uniqueLinks.length,
-              pages: pagesOut,
-              links: uniqueLinks
-            }, null, 2));
-            fs.writeFileSync('live-output/network.json', JSON.stringify(networkOut, null, 2));
-
-            const detailLinks = uniqueLinks.slice(0, 288);
-            const results = new Array(detailLinks.length);
-            let cursor = 0;
-            async function worker(workerId) {
-              while (true) {
-                const index = cursor++;
-                if (index >= detailLinks.length) break;
-                results[index] = await scrapeDetail(context, detailLinks[index], index);
-              }
-            }
-            await Promise.all(Array.from({ length: 7 }, (_, index) => worker(index)));
-
-            const targetDetails = results.filter((row) => row && row.mentionsTargetDate);
-            const chunks = [];
-            for (let i = 0; i < targetDetails.length; i += 20) {
-              const chunk = targetDetails.slice(i, i + 20);
-              const filename = `live-output/details-${String(chunks.length + 1).padStart(2, '0')}.json`;
-              fs.writeFileSync(filename, JSON.stringify(chunk, null, 2));
-              chunks.push({ filename, count: chunk.length });
-            }
-            fs.writeFileSync('live-output/index.json', JSON.stringify({
-              generatedAt: new Date().toISOString(),
-              totalUniqueLinks: uniqueLinks.length,
-              totalDetailsScraped: results.filter(Boolean).length,
-              targetDateDetails: targetDetails.length,
-              chunks,
-              errors: results.filter((row) => row && row.error).map((row) => ({ href: row.href, error: row.error }))
-            }, null, 2));
-
-            await browser.close();
-          })().catch((error) => {
-            fs.writeFileSync('live-output/fatal.txt', String(error && error.stack || error));
-            process.exitCode = 1;
-          });
+          fs.writeFileSync(path.join(dir, 'afternoon-report.md'), lines.join('\n'));
+          fs.writeFileSync(path.join(dir, 'afternoon-compact.json'), JSON.stringify(parsed, null, 2));
+          console.log(`Formatted ${parsed.length} auctions.`);
           NODE
-          node probe.js
+          node /tmp/format.js
 
-      - name: Commit compact live output
-        if: always()
+      - name: Commit report
         run: |
           git config user.name "eihale-live-probe"
           git config user.email "actions@users.noreply.github.com"
-          git add live-output
+          git add live-output/afternoon-report.md live-output/afternoon-compact.json
           if git diff --cached --quiet; then
-            echo "No probe output to commit"
+            echo "No report changes"
           else
-            git commit -m "Store live e-ihale probe output [skip ci]"
+            git commit -m "Format live afternoon e-ihale report [skip ci]"
             git push origin HEAD:eihale-live-audit-20260820
           fi
-
-      - name: Upload full probe output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: eihale-live-probe
-          path: live-output/
-          if-no-files-found: warn
-          retention-days: 1
