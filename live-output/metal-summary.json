@@ -1,0 +1,1046 @@
+{
+  "auction": {
+    "title": "ALTIN-GÜMÜŞ TAKI VE PANDORA YÜZÜK (2026-140,262,294)(5 ADET TTB)",
+    "url": "https://eihale.gov.tr/ihaleler/detay/8KsLSEh2Un6XSRypWfAqKq",
+    "currentPrice": "1.708.663 ₺",
+    "appraisal": "3.367.325 ₺",
+    "deposit": "100.000 ₺"
+  },
+  "totals": {
+    "gold": {
+      "8": 54.190000000000005,
+      "14": 218.40000000000003,
+      "18": 57.41,
+      "21": 14.989999999999998,
+      "22": 36.25
+    },
+    "silver925GrossGrams": 2128.76,
+    "quarterGoldCount": 1,
+    "diamondCarat": 2.1,
+    "matchedLines": [
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 5.24,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE UCU (8 AYAR-5,24 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 0.96,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (8 AYAR-0,96 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 4.12,
+        "listedCount": 3,
+        "line": "ALTIN KÜPE (14 AYAR-4,12 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.18,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR-2,18 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1.04,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (14 AYAR-1,04 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.03,
+        "listedCount": 1,
+        "line": "ALTIN BROŞ (14 AYAR-3,03 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 0.82,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (18 AYAR-0,82 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 21,
+        "grams": 2.13,
+        "listedCount": 2,
+        "line": "ALTIN KÜPE (21 AYAR-2,13 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.64,
+        "listedCount": 3,
+        "line": "ALTIN KOLYE UCU (14 AYAR-3,64 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 2.8,
+        "listedCount": 2,
+        "line": "ALTIN KOLYE UCU (8 AYAR-2,8 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 5.2,
+        "listedCount": 3,
+        "line": "ALTIN KÜPE (14 AYAR-5,2 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.05,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE UCU (14 AYAR-2,05 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 1.11,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (TAŞLI) (18 AYAR-1,11 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 7.03,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (8 AYAR-7,03 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 2.98,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (8 AYAR-2,98 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 107.88,
+        "listedCount": 21,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR-107,88 GRAM) MUHTELİF/MARKASIZ // 21 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 191.1,
+        "listedCount": 6,
+        "line": "GÜMÜŞ KOLYE (925 AYAR-191,1 GRAM) MUHTELİF/MARKASIZ // 6 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 21.07,
+        "listedCount": 16,
+        "line": "GÜMÜŞ KÜPE (925 AYAR-21,07 GRAM) MUHTELİF/MARKASIZ // 16 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10.35,
+        "listedCount": 4,
+        "line": "GÜMÜŞ KOLYE UCU (925 AYAR-10,35 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 208.19,
+        "listedCount": 13,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR-208,19 GRAM) MUHTELİF/MARKASIZ // 13 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 17.13,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KOLYE (925 AYAR-17,13 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 123.92,
+        "listedCount": 6,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR-123,92 GRAM) MUHTELİF/MARKASIZ // 6 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 22.84,
+        "listedCount": 6,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR-22,84 GRAM) MUHTELİF/MARKASIZ // 6 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 5.9,
+        "listedCount": 4,
+        "line": "GÜMÜŞ KÜPE (925 AYAR-5,9 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 29.63,
+        "listedCount": 5,
+        "line": "GÜMÜŞ KOLYE (925 AYAR-29,63 GRAM) MUHTELİF/MARKASIZ // 5 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 21,
+        "grams": 1.41,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (21 AYAR - 1,41 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 4,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (18 AYAR - 4 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 9.05,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (18 AYAR - 9,05 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 22,
+        "grams": 24.65,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (22 AYAR - 24,65 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 11.7,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (18 AYAR - 11,7 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 19,
+        "listedCount": 2,
+        "line": "ALTIN BİLEKLİK (14 AYAR - 19 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 7.5,
+        "listedCount": 2,
+        "line": "ALTIN YÜZÜK (14 AYAR - 7,5 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 2.34,
+        "listedCount": 3,
+        "line": "ALTIN KÜPE (8 AYAR - 2,34 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 4.75,
+        "listedCount": 3,
+        "line": "ALTIN KÜPE (14 AYAR - 4,75 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 0.7,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE UCU (14 AYAR - 0,7 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 2.55,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (18 AYAR - 2,55 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 5.98,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (14 AYAR - 5,98 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.15,
+        "listedCount": 2,
+        "line": "ALTIN KOLYE (14 AYAR - 3,15 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 9,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (PIRLANTALI-2.10 CT) (18 AYAR - 9 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 4.75,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 4,75 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.4,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (14 AYAR - 2,4 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1.15,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 1,15 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 37.45,
+        "listedCount": 11,
+        "line": "ALTIN YÜZÜK (14 AYAR - 37,45 GRAM) MUHTELİF/MARKASIZ // 11 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 1.82,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (8 AYAR - 1,82 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 0.78,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (18 AYAR - 0,78 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 2,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (18 AYAR - 2 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 1.8,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (8 AYAR - 1,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 0.9,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (8 AYAR - 0,9 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 2.23,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (18 AYAR - 2,23 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 21,
+        "grams": 11.45,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (21 AYAR - 11,45 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 16,
+        "listedCount": 3,
+        "line": "ALTIN KOLYE (14 AYAR - 16 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 22,
+        "grams": 7.95,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (22 AYAR - 7,95 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 0.8,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (8 AYAR - 0,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.5,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 2,5 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 6.5,
+        "listedCount": 8,
+        "line": "ALTIN KÜPE (14 AYAR - 6,5 GRAM) MUHTELİF/MARKASIZ // 8 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (14 AYAR - 3 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 1.4,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (8 AYAR - 1,4 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.7,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (14 AYAR - 3,7 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 11.16,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 11,16 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 5.12,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (18 AYAR - 5,12 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.45,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 3,45 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 0.85,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (18 AYAR - 0,85 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.05,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 2,05 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 0.8,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (14 AYAR - 0,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 3.52,
+        "listedCount": 2,
+        "line": "ALTIN BİLEKLİK (8 AYAR - 3,52 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 22,
+        "grams": 3.05,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (22 AYAR - 3,05 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 0.65,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 0,65 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 12.35,
+        "listedCount": 2,
+        "line": "ALTIN KOLYE (14 AYAR - 12,35 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 3.3,
+        "listedCount": 2,
+        "line": "ALTIN BİLEKLİK (8 AYAR - 3,3 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.7,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 2,7 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 3.38,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (8 AYAR - 3,38 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 2.15,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (8 AYAR - 2,15 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 5.85,
+        "listedCount": 2,
+        "line": "ALTIN YÜZÜK (14 AYAR - 5,85 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1.45,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 1,45 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 2.3,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (18 AYAR - 2,30 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.5,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (14 AYAR - 2,5 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 3.25,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (8 AYAR - 3,25 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 8.9,
+        "listedCount": 2,
+        "line": "ALTIN KOLYE (14 AYAR - 8,9 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 0.5,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE UCU (14 AYAR - 0,50 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 3,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (18 AYAR - 3 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1.59,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 1,59 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 0.8,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK PARÇASI (18 AYAR - 0,80 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 3,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (8 AYAR - 3 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 3.5,
+        "listedCount": 4,
+        "line": "ALTIN KÜPE (8 AYAR - 3,5 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.75,
+        "listedCount": 2,
+        "line": "ALTIN KÜPE (14 AYAR - 2,75 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 18,
+        "grams": 2.1,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (18 AYAR - 2,10 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.45,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE (14 AYAR - 3,45 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.08,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 3,08 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 2.55,
+        "listedCount": 2,
+        "line": "ALTIN YÜZÜK (8 AYAR - 2,55 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 0.7,
+        "listedCount": 2,
+        "line": "ALTIN KÜPE (8 AYAR - 0,70 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 4.3,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK (14 AYAR - 4,3 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 1 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 2.42,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (KIRIK) (14 AYAR - 2,42 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 3.43,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 3,43 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1,
+        "listedCount": 1,
+        "line": "ALTIN KOLYE UCU (14 AYAR - 1 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 1.52,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (14 AYAR - 1,52 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 22,
+        "grams": 0.6,
+        "listedCount": 2,
+        "line": "ALTIN KÜPE (22 AYAR - 0,6 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 8,
+        "grams": 0.77,
+        "listedCount": 1,
+        "line": "ALTIN KÜPE (8 AYAR - 0,77 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 0.77,
+        "listedCount": 1,
+        "line": "ALTIN YÜZÜK PARÇASI (14 AYAR - 0,77 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "gold",
+        "karat": 14,
+        "grams": 0.94,
+        "listedCount": 1,
+        "line": "ALTIN BİLEKLİK (14 AYAR - 0,94 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 12.38,
+        "listedCount": 2,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 12,38 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10.3,
+        "listedCount": 2,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 10,3 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 9.12,
+        "listedCount": 4,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 9,12 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 14.97,
+        "listedCount": 3,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 14,97 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 25.3,
+        "listedCount": 5,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 25,3 GRAM) MUHTELİF/MARKASIZ // 5 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10.78,
+        "listedCount": 4,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 10,78 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 1.75,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KOLYE UCU (925 AYAR - 1,75 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 4.8,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 4,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10.5,
+        "listedCount": 2,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 10,5 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 18.82,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 18,82 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 7.4,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 7,4 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 2.6,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 2,6 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 23,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 23 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10.35,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 10,35 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 43,
+        "listedCount": 8,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 43 GRAM) MUHTELİF/MARKASIZ // 8 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 79,
+        "listedCount": 7,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 79 GRAM) MUHTELİF/MARKASIZ // 7 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 60,
+        "listedCount": 8,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 60 GRAM) MUHTELİF/MARKASIZ // 8 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 20,
+        "listedCount": 22,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 20 GRAM) MUHTELİF/MARKASIZ // 22 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 20.8,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 20,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 43.78,
+        "listedCount": 2,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 43,78 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 78.6,
+        "listedCount": 6,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 78,6 GRAM) MUHTELİF/MARKASIZ // 6 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 0.8,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 0,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 40,
+        "listedCount": 12,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 40 GRAM) MUHTELİF/MARKASIZ // 12 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 20.41,
+        "listedCount": 3,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 20,41 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 12,
+        "listedCount": 2,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 12 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 4.03,
+        "listedCount": 3,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 4,03 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 2.57,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 2,57 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 17,
+        "listedCount": 3,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 17 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 27,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 27 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 75,
+        "listedCount": 5,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 75 GRAM) MUHTELİF/MARKASIZ // 5 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 10.72,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 10,72 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 26.5,
+        "listedCount": 6,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 26,5 GRAM) MUHTELİF/MARKASIZ // 6 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 53.85,
+        "listedCount": 4,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 53,85 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 42.3,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 42,30 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 111.13,
+        "listedCount": 5,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 111,13 GRAM) MUHTELİF/MARKASIZ // 5 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 50,
+        "listedCount": 4,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 50 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 1,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 1 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 20,
+        "listedCount": 1,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 20 GRAM) MUHTELİF/MARKASIZ / 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 20.03,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 20,03 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 1.04,
+        "listedCount": 1,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 1,04 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 42.75,
+        "listedCount": 6,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 42,75 GRAM) MUHTELİF/MARKASIZ // 6 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 55.45,
+        "listedCount": 4,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 55,45 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 52.55,
+        "listedCount": 4,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 52,55 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 1.6,
+        "listedCount": 1,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 1,6 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 19.67,
+        "listedCount": 2,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 19,67 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 15.75,
+        "listedCount": 3,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 15,75 GRAM) MUHTELİF/MARKASIZ // 3 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 67.98,
+        "listedCount": 5,
+        "line": "GÜMÜŞ BİLEKLİK (925 AYAR - 67,98 GRAM) MUHTELİF/MARKASIZ // 5 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 2.15,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 2,15 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 14.37,
+        "listedCount": 4,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 14,37 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 40,
+        "listedCount": 13,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 40 GRAM) MUHTELİF/MARKASIZ // 13 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 4,
+        "listedCount": 2,
+        "line": "GÜMÜŞ KOLYE UCU (925 AYAR - 4 GRAM) MUHTELİF/MARKASIZ // 2 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 1.8,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KÜPE (925 AYAR - 1,8 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 3.55,
+        "listedCount": 1,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 3,55 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 7.05,
+        "listedCount": 1,
+        "line": "GÜMÜŞ KOLYE (925 AYAR - 7,05 GRAM) MUHTELİF/MARKASIZ // 1 ADET"
+      },
+      {
+        "type": "silver925",
+        "grams": 19.45,
+        "listedCount": 4,
+        "line": "GÜMÜŞ YÜZÜK (925 AYAR - 19,45 GRAM) MUHTELİF/MARKASIZ // 4 ADET"
+      }
+    ],
+    "goldGrossGrams": 381.24,
+    "goldPureEquivalentGrams": 234.86625000000004,
+    "silverPureEquivalentGrams": 1969.1030000000003
+  }
+}
