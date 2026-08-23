@@ -1,6 +1,11 @@
 name: E-Ihale 24 August 2026 Live Audit
 
 on:
+  push:
+    branches:
+      - eihale-live-audit-20260824
+    paths:
+      - '.github/workflows/eihale-20260824.yml'
   workflow_dispatch:
 
 permissions:
@@ -38,7 +43,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No output changes to commit"
           else
-            git commit -m "Store 24 August 2026 e-ihale live audit [skip ci]"
+            git commit -m "Store refreshed 24 August 2026 e-ihale live audit [skip ci]"
             git pull --rebase origin eihale-live-audit-20260824
             git push origin HEAD:eihale-live-audit-20260824
           fi
