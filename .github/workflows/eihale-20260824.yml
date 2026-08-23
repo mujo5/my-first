@@ -1,0 +1,272 @@
+name: E-Ihale 24 August 2026 Live Audit
+
+on:
+  push:
+    branches:
+      - eihale-live-audit-20260824
+    paths:
+      - '.github/workflows/eihale-20260824.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eihale-live-audit-20260824
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Scrape and normalize 24 August auctions
+        run: |
+          mkdir -p live-output-20260824
+          cat > /tmp/audit.js <<'NODE'
+          const fs = require('fs');
+          const { chromium } = require('playwright');
+
+          const TARGET_NUMERIC = '24/08/2026';
+          const TARGET_LONG = '24 Ağustos 2026';
+          const TARGET_KEY = 20260824;
+          const BASE = 'https://eihale.gov.tr/ihaleler';
+          const OUT = 'live-output-20260824';
+
+          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          const clean = (s = '') => s.replace(/\u00a0/g, ' ').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+          const moneyNumber = (s = '') => {
+            const m = String(s).match(/[\d.]+(?:,\d+)?/);
+            return m ? Number(m[0].replace(/\./g, '').replace(',', '.')) : null;
+          };
+          const dateKeyFromNumeric = (s = '') => {
+            const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+            return m ? Number(`${m[3]}${m[2]}${m[1]}`) : null;
+          };
+          const timeFromLong = (s = '') => {
+            const m = s.match(/24 Ağustos 2026\s+(\d{2}:\d{2})/i);
+            return m ? m[1] : '';
+          };
+
+          function field(lines, label) {
+            const idx = lines.findIndex((line) => line.toLocaleLowerCase('tr-TR') === label.toLocaleLowerCase('tr-TR'));
+            if (idx < 0) return '';
+            for (let i = idx + 1; i < Math.min(lines.length, idx + 6); i += 1) {
+              const value = clean(lines[i]);
+              if (value) return value;
+            }
+            return '';
+          }
+
+          function extractDescription(lines) {
+            let start = lines.findIndex((line) => /^Açıklama \*?$/i.test(line));
+            if (start < 0) start = lines.findIndex((line) => line === 'İHALE DETAYLARI');
+            if (start < 0) return { description: '', itemLines: [], riskLines: [] };
+            let end = lines.findIndex((line, idx) => idx > start && /^(Expertiz Raporu|Ekspertiz Raporu|call|444 8 482|2021 eihale\.gov\.tr)/i.test(line));
+            if (end < 0) end = lines.length;
+            const section = lines.slice(start + 1, end).filter(Boolean);
+            const description = clean(section.join('\n'));
+            const itemPattern = /(\d[\d.,]*\s*(ADET|Adet|ÇİFT|Çift|KİLOGRAM|Kilogram|KG|Gram|RULO|Rulo|TAKIM|Takım|SET|Set|KUTU|Kutu|KAP|Kap|PAKET|Paket|METRE|Metre|M²|m²|LİTRE|Litre|TON|Ton))|\/\/\s*\d+/i;
+            const riskPattern = /(EK MALİ|GÜMRÜK VERGİSİ|KDV|ÖTV|IMEİ|IMEI|ŞİFRE|PAROLA|I-CLOUD|ICLOUD|KULLANILMIŞ|HASAR|KIRIK|EKSİK|ÇALIŞIR|ÇALIŞMA|YENİDEN İHRAÇ|FUMİGASYON|İLAÇLAMA|GARANTİ|TESCİL|RUHSAT|HURDA|ATIK|SERTİFİKA|TEST EDİL|AKTİVASYON|BATARYA|AMBALAJSIZ|KUTUSUZ)/i;
+            const itemLines = [...new Set(section.filter((line) => itemPattern.test(line)).map(clean))];
+            const riskLines = [...new Set(section.filter((line) => riskPattern.test(line)).map(clean))];
+            return { description, itemLines, riskLines };
+          }
+
+          async function openWithRetry(page, url, attempts = 3) {
+            let last;
+            for (let i = 0; i < attempts; i += 1) {
+              try {
+                await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 120000 });
+                await page.waitForTimeout(2500 + i * 1000);
+                return;
+              } catch (error) {
+                last = error;
+                await sleep(1500 * (i + 1));
+              }
+            }
+            throw last;
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({
+              locale: 'tr-TR',
+              timezoneId: 'Europe/Istanbul',
+              viewport: { width: 1440, height: 1200 },
+              userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0 Safari/537.36'
+            });
+
+            const listPage = await context.newPage();
+            const candidates = new Map();
+            const listPages = [];
+            let targetSeen = false;
+            let pagesAfterTarget = 0;
+
+            for (let skipCount = 0; skipCount <= 1440; skipCount += 48) {
+              const url = `${BASE}?skipCount=${skipCount}&maxResultCount=48`;
+              try {
+                await openWithRetry(listPage, url);
+                const entries = await listPage.locator('a[href*="/ihaleler/detay/"]').evaluateAll((anchors) => anchors.map((a) => {
+                  let node = a;
+                  let best = '';
+                  for (let i = 0; i < 10 && node; i += 1, node = node.parentElement) {
+                    const text = (node.innerText || '').replace(/\s+/g, ' ').trim();
+                    if (/\d{2}\/\d{2}\/\d{4}/.test(text) && (!best || text.length < best.length)) best = text;
+                  }
+                  return { href: a.href, context: best, anchorText: (a.innerText || '').trim() };
+                }));
+                const unique = [...new Map(entries.map((e) => [e.href, e])).values()];
+                const dateKeys = unique.map((e) => dateKeyFromNumeric(e.context)).filter(Boolean);
+                const targetCount = unique.filter((e) => e.context.includes(TARGET_NUMERIC)).length;
+                const minDate = dateKeys.length ? Math.min(...dateKeys) : null;
+                const maxDate = dateKeys.length ? Math.max(...dateKeys) : null;
+                listPages.push({ skipCount, url: listPage.url(), count: unique.length, targetCount, minDate, maxDate });
+
+                for (const entry of unique) {
+                  if (entry.context.includes(TARGET_NUMERIC)) candidates.set(entry.href, entry);
+                }
+
+                if (targetCount > 0) {
+                  targetSeen = true;
+                  pagesAfterTarget = 0;
+                } else if (targetSeen && minDate && minDate > TARGET_KEY) {
+                  pagesAfterTarget += 1;
+                  if (pagesAfterTarget >= 1) break;
+                }
+              } catch (error) {
+                listPages.push({ skipCount, url, error: String(error) });
+              }
+            }
+
+            // Fallback: if card-level extraction fails, inspect links from the first 12 pages.
+            if (!candidates.size) {
+              for (let skipCount = 0; skipCount <= 528; skipCount += 48) {
+                const url = `${BASE}?skipCount=${skipCount}&maxResultCount=48`;
+                try {
+                  await openWithRetry(listPage, url);
+                  const hrefs = await listPage.locator('a[href*="/ihaleler/detay/"]').evaluateAll((as) => [...new Set(as.map((a) => a.href))]);
+                  for (const href of hrefs) candidates.set(href, { href, context: '' });
+                } catch {}
+              }
+            }
+
+            const urls = [...candidates.keys()];
+            const auctions = [];
+            const errors = [];
+            let cursor = 0;
+            const workerCount = Math.min(4, Math.max(1, urls.length));
+
+            async function worker(workerId) {
+              const page = await context.newPage();
+              while (true) {
+                const idx = cursor++;
+                if (idx >= urls.length) break;
+                const url = urls[idx];
+                try {
+                  await openWithRetry(page, url);
+                  const bodyText = clean(await page.locator('body').innerText());
+                  const title = clean((await page.title()).replace(/^E-İhale\s*\|\s*/i, ''));
+                  const lines = bodyText.split(/\n/).map(clean).filter(Boolean);
+                  const end = field(lines, 'İhale Bitiş Tarihi:');
+                  if (!end.includes(TARGET_LONG)) continue;
+                  const descriptionData = extractDescription(lines);
+                  const currentMatch = bodyText.match(/Güncel Fiyat:\s*([\d.]+(?:,\d+)?)\s*₺/i);
+                  const starting = field(lines, 'Başlangıç Bedeli:');
+                  const current = currentMatch ? `${currentMatch[1]} ₺` : starting;
+                  const auction = {
+                    title,
+                    url,
+                    auctionNumber: field(lines, 'İhale Numarası:'),
+                    business: field(lines, 'İşletme Müdürlüğü:'),
+                    mainCategory: field(lines, 'Ana Kategori:'),
+                    subCategory: field(lines, 'Alt Kategori:'),
+                    itemCategory: field(lines, 'Eşya Kategori:'),
+                    location: field(lines, 'Bulunduğu Yer:'),
+                    extraFinancial: field(lines, 'Ek Mali Yükümlülük:'),
+                    liquidationReason: field(lines, 'Tasfiye Nedeni:'),
+                    appraisal: field(lines, 'Satışa Esas Bedel:'),
+                    deposit: field(lines, 'Teminat Bedeli:'),
+                    starting,
+                    current,
+                    startingNumber: moneyNumber(starting),
+                    currentNumber: moneyNumber(current),
+                    appraisalNumber: moneyNumber(field(lines, 'Satışa Esas Bedel:')),
+                    depositNumber: moneyNumber(field(lines, 'Teminat Bedeli:')),
+                    end,
+                    time: timeFromLong(end),
+                    itemLines: descriptionData.itemLines,
+                    riskLines: descriptionData.riskLines,
+                    description: descriptionData.description
+                  };
+                  auctions.push(auction);
+                } catch (error) {
+                  errors.push({ url, workerId, error: String(error) });
+                }
+              }
+              await page.close();
+            }
+
+            await Promise.all(Array.from({ length: workerCount }, (_, i) => worker(i)));
+            auctions.sort((a, b) => a.time.localeCompare(b.time) || a.title.localeCompare(b.title, 'tr'));
+
+            const generatedAt = new Date().toISOString();
+            const summary = {
+              generatedAt,
+              targetDate: TARGET_LONG,
+              candidateLinks: urls.length,
+              verifiedAuctions: auctions.length,
+              firstEnd: auctions[0]?.end || null,
+              lastEnd: auctions.at(-1)?.end || null,
+              listPages,
+              errors
+            };
+
+            fs.writeFileSync(`${OUT}/summary.json`, JSON.stringify(summary, null, 2));
+            fs.writeFileSync(`${OUT}/auctions.json`, JSON.stringify(auctions, null, 2));
+
+            const rows = auctions.map((a) => `| ${a.time} | [${a.title.replace(/\|/g, '/')} ](${a.url}) | ${a.starting || '—'} | ${a.current || '—'} | ${a.appraisal || '—'} | ${a.deposit || '—'} | ${a.extraFinancial || '—'} |`).join('\n');
+            let md = `# 24 Ağustos 2026 E-İhale Canlı Kataloğu\n\n`;
+            md += `Tarama zamanı: **${generatedAt}**  \n`;
+            md += `Detay sayfasındaki bitiş tarihi doğrulanan lot: **${auctions.length}**\n\n`;
+            md += `> Teklifler tarama anına aittir ve kapanışa kadar değişebilir.\n\n`;
+            md += `| Saat | İhale | Başlangıç | Canlı | Satışa esas | Teminat | Ek yük |\n|---:|---|---:|---:|---:|---:|---|\n${rows}\n\n`;
+            for (const a of auctions) {
+              md += `## ${a.time} — ${a.title}\n\n`;
+              md += `- **Detay:** ${a.url}\n- **İhale no:** ${a.auctionNumber || '—'}\n- **İşletme:** ${a.business || '—'}\n- **Yer:** ${a.location || '—'}\n- **Kategori:** ${a.itemCategory || a.subCategory || a.mainCategory || '—'}\n- **Başlangıç / canlı:** ${a.starting || '—'} / ${a.current || '—'}\n- **Satışa esas / teminat:** ${a.appraisal || '—'} / ${a.deposit || '—'}\n- **Ek mali yük:** ${a.extraFinancial || '—'}\n- **Tasfiye nedeni:** ${a.liquidationReason || '—'}\n- **Bitiş:** ${a.end}\n\n`;
+              md += `### Ürünler\n${a.itemLines.length ? a.itemLines.map((x) => `- ${x}`).join('\n') : '- Ürün satırları otomatik olarak ayrıştırılamadı; açıklama JSON dosyasında korunmuştur.'}\n\n`;
+              if (a.riskLines.length) md += `### Özel risk ve maliyet şartları\n${a.riskLines.map((x) => `- ${x}`).join('\n')}\n\n`;
+            }
+            fs.writeFileSync(`${OUT}/catalog.md`, md);
+
+            await browser.close();
+          })().catch((error) => {
+            fs.writeFileSync(`${OUT}/fatal.txt`, String(error && error.stack || error));
+            process.exitCode = 1;
+          });
+          NODE
+          node /tmp/audit.js
+
+      - name: Commit live output
+        if: always()
+        run: |
+          git config user.name "eihale-live-probe"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-output-20260824
+          if git diff --cached --quiet; then
+            echo "No output changes to commit"
+          else
+            git commit -m "Store 24 August 2026 e-ihale live audit [skip ci]"
+            git push origin HEAD:eihale-live-audit-20260824
+          fi
