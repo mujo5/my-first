@@ -1,6 +1,6 @@
 # 24 Ağustos 2026 E-İhale Canlı Kataloğu
 
-Tarama: **2026-08-23T19:48:34.133Z**  
+Tarama: **2026-08-23T21:56:40.178Z**  
 Doğrulanan lot: **47**
 
 > Canlı teklifler tarama anına aittir.
@@ -11,17 +11,17 @@ Doğrulanan lot: **47**
 | 13:10 | [KOLTUK ÖRTÜSÜ ](https://eihale.gov.tr/ihaleler/detay/mjFtzjjyiLYxfjvEXx3EwW) | 834.000 ₺ | 834.000 ₺ | 1.668.000 ₺ | 100.000 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 13:15 | [TESBİH ](https://eihale.gov.tr/ihaleler/detay/6TKeekotdvz1DkL9ruRqD2) | 37.900 ₺ | 37.900 ₺ | 75.800 ₺ | 7.580 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 13:20 | [CAM,CAM TAŞIMA STANDI ](https://eihale.gov.tr/ihaleler/detay/aQemviZyA4ybUquwSntqP7) | 385.600 ₺ | 385.600 ₺ | 771.200 ₺ | 77.120 ₺ | Ek mali yükümlülük bulunmamaktadır |
-| 13:25 | [KOMPRESÖR ](https://eihale.gov.tr/ihaleler/detay/jJK6XsnSmdHNUcpiJNzf23) | 5.000 ₺ | 5.100 ₺ | 10.000 ₺ | 1.000 ₺ | Ek mali yükümlülük bulunmamaktadır |
+| 13:25 | [KOMPRESÖR ](https://eihale.gov.tr/ihaleler/detay/jJK6XsnSmdHNUcpiJNzf23) | 5.000 ₺ | 5.250 ₺ | 10.000 ₺ | 1.000 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 13:30 | [KOMPRESÖR ](https://eihale.gov.tr/ihaleler/detay/nkyXxWpt6aeoS7qqtfrEbC) | 3.300 ₺ | 3.300 ₺ | 6.600 ₺ | 660 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 13:35 | [KOMPRESÖR ](https://eihale.gov.tr/ihaleler/detay/1mpL8UsdUmLRrjfNaLUTc7) | 2.000 ₺ | 10.175 ₺ | 4.000 ₺ | 400 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 13:40 | [CEP TELEFONU,ŞARJ KABLOSU VE ADAPTÖR ](https://eihale.gov.tr/ihaleler/detay/1NY7dGC2tFbN24SsWFsNgj) | 26.000 ₺ | 26.000 ₺ | 52.000 ₺ | 5.200 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 13:45 | [OTO TEYP ](https://eihale.gov.tr/ihaleler/detay/wfvwWEmjmZzTewHcLD9axG) | 35.000 ₺ | 35.000 ₺ | 70.000 ₺ | 7.000 ₺ | Ek mali yükümlülük bulunmamaktadır |
-| 13:50 | [KONTEYNER ](https://eihale.gov.tr/ihaleler/detay/hyR7tQwq5onfeGtYS5vJEk) | 21.000 ₺ | 21.000 ₺ | 42.000 ₺ | 4.200 ₺ | Ek mali yükümlülük bulunmamaktadır |
-| 13:55 | [KONTEYNER ](https://eihale.gov.tr/ihaleler/detay/qBNVNdDgcVkUmSUNrLDgJP) | 27.000 ₺ | 27.000 ₺ | 54.000 ₺ | 5.400 ₺ | Ek mali yükümlülük bulunmamaktadır |
+| 13:50 | [KONTEYNER ](https://eihale.gov.tr/ihaleler/detay/hyR7tQwq5onfeGtYS5vJEk) | 21.000 ₺ | 21.250 ₺ | 42.000 ₺ | 4.200 ₺ | Ek mali yükümlülük bulunmamaktadır |
+| 13:55 | [KONTEYNER ](https://eihale.gov.tr/ihaleler/detay/qBNVNdDgcVkUmSUNrLDgJP) | 27.000 ₺ | 27.500 ₺ | 54.000 ₺ | 5.400 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 14:00 | [CAM EŞYA ](https://eihale.gov.tr/ihaleler/detay/q1SfCAEEZYawXipmQ7GaAK) | 54.600 ₺ | 54.600 ₺ | 109.200 ₺ | 10.920 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 14:05 | [KULAKLIK, ŞARJ KABLOSU, ADAPTÖR ](https://eihale.gov.tr/ihaleler/detay/qL3mq7rE2xKwaYMXH9nMLH) | 2.350 ₺ | 2.350 ₺ | 4.700 ₺ | 470 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 14:10 | [CEP TELEFONU ](https://eihale.gov.tr/ihaleler/detay/6Lpt1xjgkZcGqPekR5uk55) | 40.850 ₺ | 42.350 ₺ | 81.700 ₺ | 8.170 ₺ | Ek mali yükümlülük bulunmamaktadır |
-| 14:15 | [NARGİLE TAKIMI APARATLARI ](https://eihale.gov.tr/ihaleler/detay/6Mu1yfgnYg37WCei4XGgUr) | 2.000 ₺ | 2.000 ₺ | 4.000 ₺ | 400 ₺ | Ek mali yükümlülük bulunmamaktadır |
+| 14:15 | [NARGİLE TAKIMI APARATLARI ](https://eihale.gov.tr/ihaleler/detay/6Mu1yfgnYg37WCei4XGgUr) | 2.000 ₺ | 2.025 ₺ | 4.000 ₺ | 400 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 14:20 | [ÇAKMAK ](https://eihale.gov.tr/ihaleler/detay/qoBwUFdUfNZfYaxvUcvSYH) | 33.625 ₺ | 33.625 ₺ | 67.250 ₺ | 6.725 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 14:25 | [AMBALAJLAMA İŞLEMLERİNDE KULLANILDIĞI DEĞERLENDİRİLEN MAKİNE ](https://eihale.gov.tr/ihaleler/detay/aPjjhvZ3eQJuaTnP9MeR1n) | 64.050 ₺ | 64.050 ₺ | 128.100 ₺ | 12.810 ₺ | Ek mali yükümlülük bulunmamaktadır |
 | 14:30 | [AYAKKABI ](https://eihale.gov.tr/ihaleler/detay/3dPz9g7do4ijmb2onLhrcA) | 36.400 ₺ | 36.400 ₺ | 72.800 ₺ | 7.280 ₺ | Ek mali yükümlülük bulunmamaktadır |
@@ -127,7 +127,7 @@ Doğrulanan lot: **47**
 - İşletme: MERSİN T.İ.M.
 - Yer: MERSİNTİM 1 NOLU KAÇAK EŞYA AMBARI
 - Kategori: Elektronik Eşya
-- Başlangıç / canlı: 5.000 ₺ / 5.100 ₺
+- Başlangıç / canlı: 5.000 ₺ / 5.250 ₺
 - Satışa esas / teminat: 10.000 ₺ / 1.000 ₺
 - Ek mali yük: Ek mali yükümlülük bulunmamaktadır
 - Tasfiye nedeni: 5607 Sayılı Kanun
@@ -228,7 +228,7 @@ Doğrulanan lot: **47**
 - İşletme: MERSİN T.İ.M.
 - Yer: MIP-MERSİN ULUSLARARASI LİMAN İŞLETMECİLİĞİ A.Ş.
 - Kategori: Konteyner
-- Başlangıç / canlı: 21.000 ₺ / 21.000 ₺
+- Başlangıç / canlı: 21.000 ₺ / 21.250 ₺
 - Satışa esas / teminat: 42.000 ₺ / 4.200 ₺
 - Ek mali yük: Ek mali yükümlülük bulunmamaktadır
 - Tasfiye nedeni: 4458 Sayılı Kanun
@@ -244,7 +244,7 @@ Doğrulanan lot: **47**
 - İşletme: MERSİN T.İ.M.
 - Yer: MIP-MERSİN ULUSLARARASI LİMAN İŞLETMECİLİĞİ A.Ş.
 - Kategori: Konteyner
-- Başlangıç / canlı: 27.000 ₺ / 27.000 ₺
+- Başlangıç / canlı: 27.000 ₺ / 27.500 ₺
 - Satışa esas / teminat: 54.000 ₺ / 5.400 ₺
 - Ek mali yük: Ek mali yükümlülük bulunmamaktadır
 - Tasfiye nedeni: 4458 Sayılı Kanun
@@ -319,7 +319,7 @@ Doğrulanan lot: **47**
 - İşletme: MERSİN T.İ.M.
 - Yer: MERSİNTİM 1 NOLU KAÇAK EŞYA AMBARI
 - Kategori: Elektronik Eşya
-- Başlangıç / canlı: 2.000 ₺ / 2.000 ₺
+- Başlangıç / canlı: 2.000 ₺ / 2.025 ₺
 - Satışa esas / teminat: 4.000 ₺ / 400 ₺
 - Ek mali yük: Ek mali yükümlülük bulunmamaktadır
 - Tasfiye nedeni: 5607 Sayılı Kanun
