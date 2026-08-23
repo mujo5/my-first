@@ -1,0 +1,45 @@
+name: Build 24 August E-Ihale Compact Index
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/eihale-compact-20260824.yml'
+      - '.github/scripts/eihale-compact-20260824.js'
+      - '.github/workflows/eihale-20260824.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  compact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eihale-live-audit-20260824
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build compact auction index
+        run: node .github/scripts/eihale-compact-20260824.js
+
+      - name: Commit compact output
+        run: |
+          git config user.name "eihale-live-probe"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-output-20260824/compact.jsonl live-output-20260824/inventory-index.md
+          if git diff --cached --quiet; then
+            echo "No compact output changes"
+            exit 0
+          fi
+          git commit -m "Build compact 24 August auction index [skip ci]"
+          git pull --rebase origin eihale-live-audit-20260824
+          git push origin HEAD:eihale-live-audit-20260824
