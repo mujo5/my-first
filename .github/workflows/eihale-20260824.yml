@@ -4,17 +4,19 @@ on:
   push:
     branches:
       - eihale-live-audit-20260824
-    paths:
-      - '.github/workflows/eihale-20260824.yml'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,10 +31,11 @@ jobs:
         run: |
           npm init -y
           npm install playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Scrape and normalize 24 August auctions
         run: |
+          rm -rf live-output-20260824
           mkdir -p live-output-20260824
           cat > /tmp/audit.js <<'NODE'
           const fs = require('fs');
@@ -40,56 +43,48 @@ jobs:
 
           const TARGET_NUMERIC = '24/08/2026';
           const TARGET_LONG = '24 Ağustos 2026';
-          const TARGET_KEY = 20260824;
           const BASE = 'https://eihale.gov.tr/ihaleler';
           const OUT = 'live-output-20260824';
-
-          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           const clean = (s = '') => s.replace(/\u00a0/g, ' ').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
           const moneyNumber = (s = '') => {
             const m = String(s).match(/[\d.]+(?:,\d+)?/);
             return m ? Number(m[0].replace(/\./g, '').replace(',', '.')) : null;
           };
-          const dateKeyFromNumeric = (s = '') => {
-            const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-            return m ? Number(`${m[3]}${m[2]}${m[1]}`) : null;
-          };
-          const timeFromLong = (s = '') => {
-            const m = s.match(/24 Ağustos 2026\s+(\d{2}:\d{2})/i);
-            return m ? m[1] : '';
-          };
+          const timeFromLong = (s = '') => (s.match(/24 Ağustos 2026\s+(\d{2}:\d{2})/i) || [,''])[1];
+          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
           function field(lines, label) {
-            const idx = lines.findIndex((line) => line.toLocaleLowerCase('tr-TR') === label.toLocaleLowerCase('tr-TR'));
+            const target = label.toLocaleLowerCase('tr-TR');
+            const idx = lines.findIndex((line) => line.toLocaleLowerCase('tr-TR') === target);
             if (idx < 0) return '';
-            for (let i = idx + 1; i < Math.min(lines.length, idx + 6); i += 1) {
-              const value = clean(lines[i]);
-              if (value) return value;
+            for (let i = idx + 1; i < Math.min(lines.length, idx + 7); i += 1) {
+              if (lines[i]) return clean(lines[i]);
             }
             return '';
           }
 
-          function extractDescription(lines) {
+          function descriptionData(lines) {
             let start = lines.findIndex((line) => /^Açıklama \*?$/i.test(line));
             if (start < 0) start = lines.findIndex((line) => line === 'İHALE DETAYLARI');
-            if (start < 0) return { description: '', itemLines: [], riskLines: [] };
+            if (start < 0) return { description: '', items: [], risks: [] };
             let end = lines.findIndex((line, idx) => idx > start && /^(Expertiz Raporu|Ekspertiz Raporu|call|444 8 482|2021 eihale\.gov\.tr)/i.test(line));
             if (end < 0) end = lines.length;
-            const section = lines.slice(start + 1, end).filter(Boolean);
-            const description = clean(section.join('\n'));
+            const section = lines.slice(start + 1, end).map(clean).filter(Boolean);
             const itemPattern = /(\d[\d.,]*\s*(ADET|Adet|ÇİFT|Çift|KİLOGRAM|Kilogram|KG|Gram|RULO|Rulo|TAKIM|Takım|SET|Set|KUTU|Kutu|KAP|Kap|PAKET|Paket|METRE|Metre|M²|m²|LİTRE|Litre|TON|Ton))|\/\/\s*\d+/i;
             const riskPattern = /(EK MALİ|GÜMRÜK VERGİSİ|KDV|ÖTV|IMEİ|IMEI|ŞİFRE|PAROLA|I-CLOUD|ICLOUD|KULLANILMIŞ|HASAR|KIRIK|EKSİK|ÇALIŞIR|ÇALIŞMA|YENİDEN İHRAÇ|FUMİGASYON|İLAÇLAMA|GARANTİ|TESCİL|RUHSAT|HURDA|ATIK|SERTİFİKA|TEST EDİL|AKTİVASYON|BATARYA|AMBALAJSIZ|KUTUSUZ)/i;
-            const itemLines = [...new Set(section.filter((line) => itemPattern.test(line)).map(clean))];
-            const riskLines = [...new Set(section.filter((line) => riskPattern.test(line)).map(clean))];
-            return { description, itemLines, riskLines };
+            return {
+              description: section.join('\n'),
+              items: [...new Set(section.filter((x) => itemPattern.test(x)))],
+              risks: [...new Set(section.filter((x) => riskPattern.test(x)))]
+            };
           }
 
-          async function openWithRetry(page, url, attempts = 3) {
+          async function goto(page, url, attempts = 3) {
             let last;
             for (let i = 0; i < attempts; i += 1) {
               try {
                 await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 120000 });
-                await page.waitForTimeout(2500 + i * 1000);
+                await page.waitForTimeout(3500 + i * 1200);
                 return;
               } catch (error) {
                 last = error;
@@ -107,87 +102,61 @@ jobs:
               viewport: { width: 1440, height: 1200 },
               userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0 Safari/537.36'
             });
-
-            const listPage = await context.newPage();
-            const candidates = new Map();
+            const list = await context.newPage();
+            const candidateUrls = new Set();
             const listPages = [];
-            let targetSeen = false;
-            let pagesAfterTarget = 0;
+            let seenTarget = false;
+            let noTargetAfterSeen = 0;
 
-            for (let skipCount = 0; skipCount <= 1440; skipCount += 48) {
-              const url = `${BASE}?skipCount=${skipCount}&maxResultCount=48`;
+            for (let skip = 0; skip <= 960; skip += 48) {
+              const url = `${BASE}?skipCount=${skip}&maxResultCount=48`;
               try {
-                await openWithRetry(listPage, url);
-                const entries = await listPage.locator('a[href*="/ihaleler/detay/"]').evaluateAll((anchors) => anchors.map((a) => {
-                  let node = a;
-                  let best = '';
-                  for (let i = 0; i < 10 && node; i += 1, node = node.parentElement) {
-                    const text = (node.innerText || '').replace(/\s+/g, ' ').trim();
-                    if (/\d{2}\/\d{2}\/\d{4}/.test(text) && (!best || text.length < best.length)) best = text;
-                  }
-                  return { href: a.href, context: best, anchorText: (a.innerText || '').trim() };
-                }));
-                const unique = [...new Map(entries.map((e) => [e.href, e])).values()];
-                const dateKeys = unique.map((e) => dateKeyFromNumeric(e.context)).filter(Boolean);
-                const targetCount = unique.filter((e) => e.context.includes(TARGET_NUMERIC)).length;
-                const minDate = dateKeys.length ? Math.min(...dateKeys) : null;
-                const maxDate = dateKeys.length ? Math.max(...dateKeys) : null;
-                listPages.push({ skipCount, url: listPage.url(), count: unique.length, targetCount, minDate, maxDate });
-
-                for (const entry of unique) {
-                  if (entry.context.includes(TARGET_NUMERIC)) candidates.set(entry.href, entry);
-                }
-
-                if (targetCount > 0) {
-                  targetSeen = true;
-                  pagesAfterTarget = 0;
-                } else if (targetSeen && minDate && minDate > TARGET_KEY) {
-                  pagesAfterTarget += 1;
-                  if (pagesAfterTarget >= 1) break;
+                await goto(list, url);
+                const body = clean(await list.locator('body').innerText());
+                const hrefs = await list.locator('a[href*="/ihaleler/detay/"]').evaluateAll((as) => [...new Set(as.map((a) => a.href))]);
+                const hasTarget = body.includes(TARGET_NUMERIC);
+                listPages.push({ skip, url: list.url(), hasTarget, hrefCount: hrefs.length, sample: body.slice(0, 1000) });
+                if (hasTarget) {
+                  seenTarget = true;
+                  noTargetAfterSeen = 0;
+                  hrefs.forEach((href) => candidateUrls.add(href));
+                } else if (seenTarget) {
+                  noTargetAfterSeen += 1;
+                  if (noTargetAfterSeen >= 2) break;
                 }
               } catch (error) {
-                listPages.push({ skipCount, url, error: String(error) });
+                listPages.push({ skip, url, error: String(error) });
               }
             }
 
-            // Fallback: if card-level extraction fails, inspect links from the first 12 pages.
-            if (!candidates.size) {
-              for (let skipCount = 0; skipCount <= 528; skipCount += 48) {
-                const url = `${BASE}?skipCount=${skipCount}&maxResultCount=48`;
-                try {
-                  await openWithRetry(listPage, url);
-                  const hrefs = await listPage.locator('a[href*="/ihaleler/detay/"]').evaluateAll((as) => [...new Set(as.map((a) => a.href))]);
-                  for (const href of hrefs) candidates.set(href, { href, context: '' });
-                } catch {}
-              }
-            }
-
-            const urls = [...candidates.keys()];
+            const urls = [...candidateUrls];
             const auctions = [];
             const errors = [];
             let cursor = 0;
-            const workerCount = Math.min(4, Math.max(1, urls.length));
+            const workers = Math.min(6, Math.max(1, urls.length));
 
-            async function worker(workerId) {
+            async function worker(id) {
               const page = await context.newPage();
               while (true) {
                 const idx = cursor++;
                 if (idx >= urls.length) break;
                 const url = urls[idx];
                 try {
-                  await openWithRetry(page, url);
-                  const bodyText = clean(await page.locator('body').innerText());
-                  const title = clean((await page.title()).replace(/^E-İhale\s*\|\s*/i, ''));
-                  const lines = bodyText.split(/\n/).map(clean).filter(Boolean);
+                  await goto(page, url);
+                  const body = clean(await page.locator('body').innerText());
+                  const lines = body.split(/\n/).map(clean).filter(Boolean);
                   const end = field(lines, 'İhale Bitiş Tarihi:');
                   if (!end.includes(TARGET_LONG)) continue;
-                  const descriptionData = extractDescription(lines);
-                  const currentMatch = bodyText.match(/Güncel Fiyat:\s*([\d.]+(?:,\d+)?)\s*₺/i);
+                  const desc = descriptionData(lines);
                   const starting = field(lines, 'Başlangıç Bedeli:');
+                  const currentMatch = body.match(/Güncel Fiyat:\s*([\d.]+(?:,\d+)?)\s*₺/i);
                   const current = currentMatch ? `${currentMatch[1]} ₺` : starting;
-                  const auction = {
+                  const title = clean((await page.title()).replace(/^E-İhale\s*\|\s*/i, ''));
+                  auctions.push({
                     title,
                     url,
+                    time: timeFromLong(end),
+                    end,
                     auctionNumber: field(lines, 'İhale Numarası:'),
                     business: field(lines, 'İşletme Müdürlüğü:'),
                     mainCategory: field(lines, 'Ana Kategori:'),
@@ -204,52 +173,44 @@ jobs:
                     currentNumber: moneyNumber(current),
                     appraisalNumber: moneyNumber(field(lines, 'Satışa Esas Bedel:')),
                     depositNumber: moneyNumber(field(lines, 'Teminat Bedeli:')),
-                    end,
-                    time: timeFromLong(end),
-                    itemLines: descriptionData.itemLines,
-                    riskLines: descriptionData.riskLines,
-                    description: descriptionData.description
-                  };
-                  auctions.push(auction);
+                    itemLines: desc.items,
+                    riskLines: desc.risks,
+                    description: desc.description
+                  });
                 } catch (error) {
-                  errors.push({ url, workerId, error: String(error) });
+                  errors.push({ url, worker: id, error: String(error) });
                 }
               }
               await page.close();
             }
 
-            await Promise.all(Array.from({ length: workerCount }, (_, i) => worker(i)));
+            await Promise.all(Array.from({ length: workers }, (_, i) => worker(i)));
             auctions.sort((a, b) => a.time.localeCompare(b.time) || a.title.localeCompare(b.title, 'tr'));
-
             const generatedAt = new Date().toISOString();
-            const summary = {
+            fs.writeFileSync(`${OUT}/summary.json`, JSON.stringify({
               generatedAt,
               targetDate: TARGET_LONG,
+              targetListPages: listPages.filter((x) => x.hasTarget).length,
               candidateLinks: urls.length,
               verifiedAuctions: auctions.length,
               firstEnd: auctions[0]?.end || null,
               lastEnd: auctions.at(-1)?.end || null,
               listPages,
               errors
-            };
-
-            fs.writeFileSync(`${OUT}/summary.json`, JSON.stringify(summary, null, 2));
+            }, null, 2));
             fs.writeFileSync(`${OUT}/auctions.json`, JSON.stringify(auctions, null, 2));
 
-            const rows = auctions.map((a) => `| ${a.time} | [${a.title.replace(/\|/g, '/')} ](${a.url}) | ${a.starting || '—'} | ${a.current || '—'} | ${a.appraisal || '—'} | ${a.deposit || '—'} | ${a.extraFinancial || '—'} |`).join('\n');
-            let md = `# 24 Ağustos 2026 E-İhale Canlı Kataloğu\n\n`;
-            md += `Tarama zamanı: **${generatedAt}**  \n`;
-            md += `Detay sayfasındaki bitiş tarihi doğrulanan lot: **${auctions.length}**\n\n`;
-            md += `> Teklifler tarama anına aittir ve kapanışa kadar değişebilir.\n\n`;
-            md += `| Saat | İhale | Başlangıç | Canlı | Satışa esas | Teminat | Ek yük |\n|---:|---|---:|---:|---:|---:|---|\n${rows}\n\n`;
+            let md = `# 24 Ağustos 2026 E-İhale Canlı Kataloğu\n\nTarama: **${generatedAt}**  \nDoğrulanan lot: **${auctions.length}**\n\n> Canlı teklifler tarama anına aittir.\n\n`;
+            md += '| Saat | İhale | Başlangıç | Canlı | Satışa esas | Teminat | Ek yük |\n|---:|---|---:|---:|---:|---:|---|\n';
+            md += auctions.map((a) => `| ${a.time} | [${a.title.replace(/\|/g, '/')} ](${a.url}) | ${a.starting || '—'} | ${a.current || '—'} | ${a.appraisal || '—'} | ${a.deposit || '—'} | ${a.extraFinancial || '—'} |`).join('\n');
+            md += '\n\n';
             for (const a of auctions) {
               md += `## ${a.time} — ${a.title}\n\n`;
-              md += `- **Detay:** ${a.url}\n- **İhale no:** ${a.auctionNumber || '—'}\n- **İşletme:** ${a.business || '—'}\n- **Yer:** ${a.location || '—'}\n- **Kategori:** ${a.itemCategory || a.subCategory || a.mainCategory || '—'}\n- **Başlangıç / canlı:** ${a.starting || '—'} / ${a.current || '—'}\n- **Satışa esas / teminat:** ${a.appraisal || '—'} / ${a.deposit || '—'}\n- **Ek mali yük:** ${a.extraFinancial || '—'}\n- **Tasfiye nedeni:** ${a.liquidationReason || '—'}\n- **Bitiş:** ${a.end}\n\n`;
-              md += `### Ürünler\n${a.itemLines.length ? a.itemLines.map((x) => `- ${x}`).join('\n') : '- Ürün satırları otomatik olarak ayrıştırılamadı; açıklama JSON dosyasında korunmuştur.'}\n\n`;
-              if (a.riskLines.length) md += `### Özel risk ve maliyet şartları\n${a.riskLines.map((x) => `- ${x}`).join('\n')}\n\n`;
+              md += `- Detay: ${a.url}\n- İhale no: ${a.auctionNumber || '—'}\n- İşletme: ${a.business || '—'}\n- Yer: ${a.location || '—'}\n- Kategori: ${a.itemCategory || a.subCategory || a.mainCategory || '—'}\n- Başlangıç / canlı: ${a.starting || '—'} / ${a.current || '—'}\n- Satışa esas / teminat: ${a.appraisal || '—'} / ${a.deposit || '—'}\n- Ek mali yük: ${a.extraFinancial || '—'}\n- Tasfiye nedeni: ${a.liquidationReason || '—'}\n- Bitiş: ${a.end}\n\n`;
+              md += `### Ürünler\n${a.itemLines.length ? a.itemLines.map((x) => `- ${x}`).join('\n') : '- Ayrıştırılamadı; tam açıklama JSON dosyasında.'}\n\n`;
+              if (a.riskLines.length) md += `### Risk/özel şartlar\n${a.riskLines.map((x) => `- ${x}`).join('\n')}\n\n`;
             }
             fs.writeFileSync(`${OUT}/catalog.md`, md);
-
             await browser.close();
           })().catch((error) => {
             fs.writeFileSync(`${OUT}/fatal.txt`, String(error && error.stack || error));
